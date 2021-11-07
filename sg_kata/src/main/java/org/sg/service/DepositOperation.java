@@ -4,7 +4,7 @@ import org.sg.domaine.*;
 
 public class DepositOperation extends Operation {
     
-    private Tracker tracker;
+    private Tracker<Statement> tracker;
     
     public Account execute(Account account, double depositAmount) {
         checkOperationAmount(depositAmount);
@@ -22,12 +22,12 @@ public class DepositOperation extends Operation {
         return new Balance(updatedBalanceValue);
     }
     
-    private void historizeOperation(Account account, double depositAmount) {
+    private Statement historizeOperation(Account account, double depositAmount) {
         Statement statement = new Statement(OperationType.DEPOSIT, depositAmount, account.getBalance());
-        tracker.historize(account, statement);
+        return tracker.historize(account.getAccountNumber(), statement);
     }
     
-    public DepositOperation(Tracker tracker) {
+    public DepositOperation(Tracker<Statement> tracker) {
         this.tracker = tracker;
     }
 }

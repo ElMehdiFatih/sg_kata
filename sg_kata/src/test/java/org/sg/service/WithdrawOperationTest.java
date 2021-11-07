@@ -22,24 +22,22 @@ import static org.mockito.Mockito.*;
 public class WithdrawOperationTest {
     
     private final static double WITHDRAW_AMOUNT =100;
-    private final static double HIGH_WITHDRAW_AMOUNT =100000;
-    private final static long ACCOUNT_NUMBER = 000012356;
-    private static Balance ACCOUNT_INIT_BALANCE ;
+    private final static double HIGH_WITHDRAW_AMOUNT =1000000;
+    
     private Operation depositOperation;
     @Mock
     private OperationTracker tracker;
     
     @BeforeEach
-    public  void init() throws Exception {
+    public  void init() {
         depositOperation = new WithdrawOperation(tracker);
-        ACCOUNT_INIT_BALANCE = new Balance(1000);
     }
     
     @Test
     public void should_withdraw_money_from_account() {
         //GIVEN
-        Balance accountBalance = new Balance(1000);
-        Account account = new Account(ACCOUNT_NUMBER ,accountBalance);
+        Account account = TestUtilities.createTestAccount();
+        Balance accountBalance = account.getBalance();
         double expectedAccountBalance = accountBalance.getValue() - WITHDRAW_AMOUNT;
         
         //WHEN
@@ -47,14 +45,13 @@ public class WithdrawOperationTest {
         //THEN
         Balance actualAccountBalance = actualAccount.getBalance();
         
-        assertThat(expectedAccountBalance).isEqualTo(actualAccountBalance.getValue());
+        assertThat(actualAccountBalance.getValue()).isEqualTo(expectedAccountBalance);
     }
     
     @Test
     public void should_throw_exception_when_account_balance_is_low() {
         //GIVEN
-        Account account = new Account(ACCOUNT_NUMBER ,ACCOUNT_INIT_BALANCE);
-        Balance accountBalance = account.getBalance();
+        Account account =  TestUtilities.createTestAccount();
         //WHEN
         assertThatThrownBy( () -> depositOperation.execute(account, HIGH_WITHDRAW_AMOUNT)).isInstanceOf(WithdrawAmountException.class);
         

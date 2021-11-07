@@ -5,7 +5,7 @@ import org.sg.exception.WithdrawAmountException;
 
 public class WithdrawOperation extends Operation {
     
-    private Tracker tracker;
+    private Tracker<Statement> tracker;
     
     @Override
     public Account execute(Account account, double withdrawAmount) {
@@ -33,12 +33,12 @@ public class WithdrawOperation extends Operation {
         }
     }
     
-    private void historizeOperation(Account account, double withdrawAmount) {
+    private Statement historizeOperation(Account account, double withdrawAmount) {
         Statement statement = new Statement(OperationType.WITHDRAW, withdrawAmount, account.getBalance());
-        tracker.historize(account, statement);
+        return tracker.historize(account.getAccountNumber(), statement);
     }
     
-    public WithdrawOperation(Tracker tracker) {
+    public WithdrawOperation(Tracker<Statement> tracker) {
         this.tracker = tracker;
     }
 }

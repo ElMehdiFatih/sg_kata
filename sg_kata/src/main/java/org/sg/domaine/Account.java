@@ -9,10 +9,18 @@ public class Account {
     private Balance balance;
     private List<Statement> statements;
     
-    public Account(long accountNumber, Balance balance) {
+    private Account(long accountNumber, Balance balance) {
         this.accountNumber = accountNumber;
         this.balance = balance;
         statements = new ArrayList<>();
+    }
+    
+    public static Account createAccount(long accountNumber, Balance balance) {
+        return new Account(accountNumber, balance);
+    }
+    
+    public long getAccountNumber() {
+        return accountNumber;
     }
     
     public Balance getBalance() {

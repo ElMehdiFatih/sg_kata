@@ -6,33 +6,37 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sg.domaine.Account;
 import org.sg.domaine.Balance;
-import org.sg.domaine.OperationType;
 import org.sg.domaine.Statement;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
 public class OperationTrackerTest {
     
-    private static final long ACCOUNT_NUMBER = 10000123;
     @InjectMocks
     private OperationTracker operationTracker;
+    @Mock
+    private AccountStatement accountStatement;
     
     @BeforeEach
-    public  void init() throws Exception {
+    public  void init() {
     }
     
     @Test
     public void should_historize_operation() {
-        Balance accountInitBalance = new Balance(1000);
-        Account account = new Account(ACCOUNT_NUMBER ,accountInitBalance);
-        Statement statement = new Statement(OperationType.DEPOSIT, accountInitBalance.getValue(), account.getBalance());
-    
-        operationTracker.historize(account, statement);
+        Account account = TestUtilities.createTestAccount();
+        Statement statement = TestUtilities.createStatement();
+        when(accountStatement.saveStatement(account.getAccountNumber(), statement))
+                .thenReturn(statement);
         
-        assertThat(account.getStatements()).contains(statement);
+        Statement actualStatement = operationTracker.historize(account.getAccountNumber(), statement);
+        
+        assertThat(actualStatement).isEqualTo(statement);
     }
 }
